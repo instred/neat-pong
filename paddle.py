@@ -1,7 +1,7 @@
 import pygame
 
 class Paddle:
-    velocity = 4
+    velocity = 7
     width = 15
     height = 120
 

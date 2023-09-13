@@ -75,12 +75,77 @@ class Game:
 
         self.ball.draw(self.window)
 
+    def movePaddle(self, left=True, up=True) -> bool:
+
+        # returns false if paddle would go offscreen
+        if left:
+
+            if up and self.left_paddle.y - Paddle.velocity < 0:
+                return False
+            if not up and self.left_paddle.y + Paddle.height > self.window_height:
+                return False
+            self.left_paddle.move(up)
+        else:
+
+            if up and self.right_paddle.y - Paddle.velocity < 0:
+                return False
+            if not up and self.right_paddle.y + Paddle.height > self.window_height:
+                return False
+            self.right_paddle.move(up)
+
+        return True
+    
+    def collisions(self) -> None:
+        ball = self.ball
+        left_paddle = self.left_paddle
+        right_paddle = self.right_paddle
+
+        if ball.y + ball.radius >= self.window_height:
+            ball.y_velocity *= -1
+        elif ball.y - ball.radius <= 0:
+            ball.y_velocity *= -1
+
+        if ball.x_velocity < 0:
+            if ball.y >= left_paddle.y and ball.y <= left_paddle.y + Paddle.height:
+                if ball.x - ball.radius <= left_paddle.x + Paddle.width:
+                    ball.x_velocity *= -1
+
+                    middle_y = left_paddle.y + Paddle.height / 2
+                    difference_in_y = middle_y - ball.y
+                    reduction_factor = (Paddle.height / 2) / ball.velocity
+                    y_vel = difference_in_y / reduction_factor
+                    ball.y_velocity = -1 * y_vel
+                    self.left_hits += 1
+
+        else:
+            if ball.y >= right_paddle.y and ball.y <= right_paddle.y + Paddle.height:
+                if ball.x + ball.radius >= right_paddle.x:
+                    ball.x_velocity *= -1
+
+                    middle_y = right_paddle.y + Paddle.height / 2
+                    difference_in_y = middle_y - ball.y
+                    reduction_factor = (Paddle.height / 2) / ball.velocity
+                    y_vel = difference_in_y / reduction_factor
+                    ball.y_velocity = -1 * y_vel
+                    self.right_hits += 1
+
+
     def loop(self) -> GameInfo:
 
         game_info = GameInfo(
             self.left_hits, self.right_hits, self.left_score, self.right_score)
         
         # ball moving + collision
+
+        self.ball.move()
+        self.collisions()
+
+        if self.ball.x < 0:
+            self.ball.reset()
+            self.right_score += 1
+        elif self.ball.x > self.window_width:
+            self.ball.reset()
+            self.left_score += 1
 
         return game_info
     

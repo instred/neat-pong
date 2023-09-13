@@ -25,12 +25,12 @@ class Pong:
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_w]:
-                self.game.left_paddle.move(up=True)
+                self.game.movePaddle()
             if keys[pygame.K_s]:
-                self.game.left_paddle.move(up=False)
+                self.game.movePaddle(up=False)
 
 
-
+            game_info = self.game.loop()
             self.game.draw(True, False)
             pygame.display.update()
 
