@@ -28,6 +28,10 @@ class Pong:
                 self.game.movePaddle()
             if keys[pygame.K_s]:
                 self.game.movePaddle(up=False)
+            if keys[pygame.K_UP]:
+                self.game.movePaddle(left=False, up=True)
+            if keys[pygame.K_DOWN]:
+                self.game.movePaddle(left=False, up=False)
 
 
             game_info = self.game.loop()
